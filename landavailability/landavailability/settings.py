@@ -91,6 +91,7 @@ WSGI_APPLICATION = 'landavailability.wsgi.application'
 
 DATABASES = {}
 DATABASES['default'] = dj_database_url.config()
+DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 
 
 # Password validation
