@@ -2,6 +2,7 @@ import pytest
 from unittest import TestCase
 from django.contrib.gis.geos import GEOSGeometry
 from lr.models import LRPoly, Uprn
+from datetime import datetime
 
 
 class TestLandModel(TestCase):
@@ -9,6 +10,8 @@ class TestLandModel(TestCase):
     def test_lrpoly_model_creation(self):
         lrpoly = LRPoly()
         lrpoly.title = 'A6523948'
+        lrpoly.insert = datetime.now()
+        lrpoly.update = datetime.now()
         lrpoly.status = 'A'
 
         geometry = """
@@ -42,6 +45,8 @@ class TestLandModel(TestCase):
     def test_uprn_model_creation(self):
         lrpoly = LRPoly()
         lrpoly.title = 'A6523948'
+        lrpoly.insert = datetime.now()
+        lrpoly.update = datetime.now()
         lrpoly.status = 'A'
 
         geometry = """
