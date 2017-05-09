@@ -1,3 +1,6 @@
+from collections import defaultdict
+from pprint import pprint
+
 from django.core.management.base import BaseCommand, CommandError
 import csv
 import shapefile
@@ -29,8 +32,11 @@ class CSVImportCommand(BaseCommand):
                 if self.skip_header:
                     next(reader)
 
+                outcome_counts = defaultdict(int)
                 for row in reader:
-                    self.process_row(row)
+                    outcome = self.process_row(row)
+                    outcome_counts[outcome or 'processed'] += 1
+                    pprint(dict(outcome_counts))
 
 
 class ShapefileImportCommand(BaseCommand):
@@ -45,9 +51,13 @@ class ShapefileImportCommand(BaseCommand):
     def handle(self, *args, **options):
         shp_file_name = options.get('shp_file')
 
+        outcome_counts = defaultdict(int)
         if shp_file_name:
             reader = shapefile.Reader(shp_file_name)
             for record in reader.iterShapeRecords():
                 if record.shape.shapeType == shapefile.NULL:
+                    outcome_counts['no shapefile'] += 1
                     continue
-                self.process_record(record)
+                outcome = self.process_record(record)
+                outcome_counts[outcome or 'processed'] += 1
+                pprint(dict(outcome_counts))
