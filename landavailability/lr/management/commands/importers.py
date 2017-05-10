@@ -1,5 +1,5 @@
 from collections import defaultdict
-from pprint import pprint
+import time
 
 from django.core.management.base import BaseCommand
 import csv
@@ -33,10 +33,11 @@ class CSVImportCommand(BaseCommand):
                     next(reader)
 
                 outcome_counts = defaultdict(int)
-                for row in reader:
+                start_time = time.time()
+                for count, row in enumerate(reader):
                     outcome = self.process_row(row)
                     outcome_counts[outcome or 'processed'] += 1
-                    pprint(dict(outcome_counts))
+                    print_outcomes_and_rate(count, outcome_counts, start_time)
 
 
 class ShapefileImportCommand(BaseCommand):
@@ -52,17 +53,26 @@ class ShapefileImportCommand(BaseCommand):
         shp_filenames = options['shp_filename']
 
         outcome_counts = defaultdict(int)
+        start_time = time.time()
         for shp_filename in shp_filenames:
             self.process_shapefile(shp_filename,
-                                   outcome_counts)
+                                   outcome_counts,
+                                   start_time)
 
-    def process_shapefile(self, shp_filename, outcome_counts):
+    def process_shapefile(self, shp_filename, outcome_counts, start_time):
         print('Processing shapefile {}'.format(shp_filename))
         shp_reader = shapefile.Reader(shp_filename)
-        for record in shp_reader.iterShapeRecords():
+        for count, record in enumerate(shp_reader.iterShapeRecords()):
             if record.shape.shapeType == shapefile.NULL:
                 outcome_counts['no shapefile'] += 1
                 continue
             outcome = self.process_record(record)
             outcome_counts[outcome or 'processed'] += 1
-            pprint(dict(outcome_counts))
+            print_outcomes_and_rate(count, outcome_counts, start_time)
+
+
+def print_outcomes_and_rate(count, outcome_counts, start_time):
+    if count % 100 == 0:
+        rate_per_hour = round(count / (time.time() - start_time) * 60 * 60, -3)
+        print(dict(outcome_counts), end=' ')
+        print('Rate: {:.0f}/hour'.format(rate_per_hour))
