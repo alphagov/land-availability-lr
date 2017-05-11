@@ -11,7 +11,9 @@ env:
   global:
   - DATABASE_URL=postgres://postgres@localhost:5432/landavailability_test
   - SECRET_KEY=abcd1234
-script: pytest -v
+script: pytest -v --cov-report= --cov=lr tests/
+after_success:
+  - codecov
 deploy:
   provider: heroku
   api_key:

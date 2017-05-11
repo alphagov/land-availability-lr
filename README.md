@@ -4,6 +4,7 @@ Land Registry service for Land Availability Tool
 # Continuous integration status
 
 [![Travis-CI Status](https://secure.travis-ci.org/alphagov/land-availability-lr.png?branch=master)](http://travis-ci.org/#!/alphagov/land-availability-lr)
+[![codecov](https://codecov.io/gh/alphagov/land-availability-lr/branch/master/graph/badge.svg)](https://codecov.io/gh/alphagov/land-availability-lr)
 
 # PostgreSQL Setup
 
