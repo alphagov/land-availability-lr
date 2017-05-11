@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_gis',
+    'opbeat.contrib.django',
 ]
 
 MIDDLEWARE = [
@@ -64,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'opbeat.contrib.django.middleware.OpbeatAPMMiddleware',
 ]
 
 ROOT_URLCONF = 'landavailability.urls'
@@ -145,4 +147,11 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     )
+}
+
+OPBEAT = {
+    'DEBUG': True,
+    'ORGANIZATION_ID': get_env_variable('OPBEAT_ORGANIZATION_ID'),
+    'APP_ID': get_env_variable('OPBEAT_APP_ID'),
+    'SECRET_TOKEN': get_env_variable('OPBEAT_SECRET_TOKEN'),
 }
