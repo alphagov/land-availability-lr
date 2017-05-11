@@ -1,7 +1,7 @@
 from collections import defaultdict
 from pprint import pprint
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 import csv
 import shapefile
 
@@ -43,21 +43,26 @@ class ShapefileImportCommand(BaseCommand):
     help = 'Import data from a *.shp file'
 
     def add_arguments(self, parser):
-        parser.add_argument('shp_file', type=str)
+        parser.add_argument('shp_filename', type=str, nargs='+')
 
     def process_record(self, record):
         pass
 
     def handle(self, *args, **options):
-        shp_file_name = options.get('shp_file')
+        shp_filenames = options['shp_filename']
 
         outcome_counts = defaultdict(int)
-        if shp_file_name:
-            reader = shapefile.Reader(shp_file_name)
-            for record in reader.iterShapeRecords():
-                if record.shape.shapeType == shapefile.NULL:
-                    outcome_counts['no shapefile'] += 1
-                    continue
-                outcome = self.process_record(record)
-                outcome_counts[outcome or 'processed'] += 1
-                pprint(dict(outcome_counts))
+        for shp_filename in shp_filenames:
+            self.process_shapefile(shp_filename,
+                                   outcome_counts)
+
+    def process_shapefile(self, shp_filename, outcome_counts):
+        print('Processing shapefile {}'.format(shp_filename))
+        shp_reader = shapefile.Reader(shp_filename)
+        for record in shp_reader.iterShapeRecords():
+            if record.shape.shapeType == shapefile.NULL:
+                outcome_counts['no shapefile'] += 1
+                continue
+            outcome = self.process_record(record)
+            outcome_counts[outcome or 'processed'] += 1
+            pprint(dict(outcome_counts))
