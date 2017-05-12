@@ -6,6 +6,7 @@ services:
 - postgresql
 before_script:
 - psql -c 'create database landavailability_test;' -U postgres
+- psql -U postgres -c "create extension postgis"
 - cd landavailability
 env:
   global:
@@ -16,6 +17,7 @@ after_success:
   - codecov
 deploy:
   provider: heroku
+  buildpack: https://github.com/cyberdelia/heroku-geo-buildpack.git
   api_key:
     secure: "kghu8Uy+XKByqg6JsOzIPx6gm+9M8NI/8j1xmU6k70BQvI3i6B+hgxRdRAJM9M/ZOtokVqMQq2Cn0XD5HJwwvbhoRicw/hCVmiY5kYpiaPUFQAOA9PQkHvUfx3/v/F4mwfda5XqfBrw15Y3UsoQoXuGiQoi7QpCfgxK1lqn1U9B9QkIVKN7rC5VtmXsLBRk15IJpyn+VNkpie8DK7Irq4LWo1/kq19CvVkIEGOXy3LEo7zeuELYPn4bTPn4B8sGph6s6bvv+i+NrF7ggtrK5NNqkBo8DLfVs/8Dh/vpliJ8DF3KikQe98BEDUWbc/lU2gIBpyab3pPKFHBewFbZcY9ZPVDqUZvb8U07X4bUqZ0uPsUNRkA+Cs6SGcMS48rXe27IEk9yfJBcZLiDEq2aW5NBbWYRtE6b7RZZ43wv6ca04A9IlSwWC2+qq6Su4HzktAfxz+LyQnv7uVjYzN/qS0eCuz0djPgl5qw1Jdd3klh3BHsqcGiAbP1ITJqJ/iIONJNm6+jTpVN6XxSSvA7HiST/o3seq9X1rAJJ2+nXrm64b8IIoQPN7g5dQ5GmNSz9Gw0dFL0uSK6cfEdJohdBVsNuKf0WTDq3vLz0wXq5nHnmUHEV9+7IKb4+2MmIALLvISGn5JdlY+SXGXSoSyOogXEBLzQl838ULGYbbrKtVatE="
   strategy: git
