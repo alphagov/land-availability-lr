@@ -1,15 +1,18 @@
 import pytest
 from unittest import TestCase
 from django.contrib.gis.geos import GEOSGeometry
-from lr.models import LRPoly, Uprn
+from lr.models import Polygon, Uprn, Title
 from datetime import datetime
 
 
 class TestLandModel(TestCase):
     @pytest.mark.django_db
     def test_lrpoly_model_creation(self):
-        lrpoly = LRPoly()
-        lrpoly.title = 'A6523948'
+        lrpoly = Polygon()
+        lrpoly.id = 1234
+        title = Title(id='A6523948')
+        title.save()
+        lrpoly.title = title
         lrpoly.insert = datetime.now()
         lrpoly.update = datetime.now()
         lrpoly.status = 'A'
@@ -39,12 +42,15 @@ class TestLandModel(TestCase):
         lrpoly.geom = GEOSGeometry(geometry, srid=27700)
         lrpoly.save()
 
-        self.assertEqual(LRPoly.objects.count(), 1)
+        self.assertEqual(Polygon.objects.count(), 1)
 
     @pytest.mark.django_db
     def test_uprn_model_creation(self):
-        lrpoly = LRPoly()
-        lrpoly.title = 'A6523948'
+        lrpoly = Polygon()
+        lrpoly.id = 1234
+        title = Title(id='A6523948')
+        title.save()
+        lrpoly.title = title
         lrpoly.insert = datetime.now()
         lrpoly.update = datetime.now()
         lrpoly.status = 'A'
@@ -74,10 +80,10 @@ class TestLandModel(TestCase):
         lrpoly.geom = GEOSGeometry(geometry, srid=27700)
         lrpoly.save()
 
-        self.assertEqual(LRPoly.objects.count(), 1)
+        self.assertEqual(Polygon.objects.count(), 1)
 
         uprn = Uprn()
-        uprn.title = lrpoly
+        uprn.title = title
         uprn.uprn = "0031535421432"
         uprn.save()
 

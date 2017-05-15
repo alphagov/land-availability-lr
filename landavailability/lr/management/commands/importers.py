@@ -66,7 +66,8 @@ class ShapefileImportCommand(BaseCommand):
             if record.shape.shapeType == shapefile.NULL:
                 outcome_counts['no shapefile'] += 1
                 continue
-            outcome = self.process_record(record)
+            outcome = self.process_record(*record.record,
+                                          record.shape.__geo_interface__)
             outcome_counts[outcome or 'processed'] += 1
             print_outcomes_and_rate(count, outcome_counts, start_time)
 
