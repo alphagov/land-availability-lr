@@ -1,5 +1,6 @@
 from django.contrib.gis.db import models
 
+
 class Title(models.Model):
     # Describes an instance of a Title from Land Registry
     id = models.CharField(unique=True, primary_key=True, max_length=20)
@@ -12,7 +13,7 @@ class Polygon(models.Model):
     # associated with a Title.
 
     id = models.IntegerField(unique=True, primary_key=True)
-    title = models.ForeignKey(Title)
+    title = models.ForeignKey(Title, related_name='polygons')
     insert = models.DateTimeField()
     update = models.DateTimeField()
     status = models.CharField(max_length=1)

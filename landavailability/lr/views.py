@@ -4,7 +4,7 @@ from .models import Uprn
 from .serializers import UprnSerializer
 
 
-class LRDetailView(generics.RetrieveAPIView):
+class UprnDetailView(generics.RetrieveAPIView):
     permission_classes = (IsAuthenticated, )
     queryset = Uprn.objects.all()
     serializer_class = UprnSerializer
