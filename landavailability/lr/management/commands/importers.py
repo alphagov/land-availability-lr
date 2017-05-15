@@ -73,7 +73,7 @@ class ShapefileImportCommand(BaseCommand):
 
 
 def print_outcomes_and_rate(count, outcome_counts, start_time):
-    if count % 100 == 0:
+    if count % 10000 == 0:
         total_count = sum(outcome_counts.values())
         rate_per_hour = total_count / (time.time() - start_time) * 60 * 60
         print(dict(outcome_counts), end=' ')

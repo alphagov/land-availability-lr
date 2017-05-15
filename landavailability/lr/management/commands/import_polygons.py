@@ -63,6 +63,6 @@ class Command(ShapefileImportCommand):
         try:
             poly.save()
         except Exception as e:
-            print('Could not add: {} {}'.format(record.record, e))
+            print('Could not add: {} {}'.format(polygon_id, e))
             outcome = 'Error: could not save'
         return outcome
