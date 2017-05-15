@@ -8,8 +8,7 @@ from datetime import datetime
 class TestLandModel(TestCase):
     @pytest.mark.django_db
     def test_lrpoly_model_creation(self):
-        lrpoly = Polygon()
-        lrpoly.id = 1234
+        lrpoly = Polygon(id=1234)
         title = Title(id='A6523948')
         title.save()
         lrpoly.title = title
@@ -46,8 +45,7 @@ class TestLandModel(TestCase):
 
     @pytest.mark.django_db
     def test_uprn_model_creation(self):
-        lrpoly = Polygon()
-        lrpoly.id = 1234
+        lrpoly = Polygon(id=1234)
         title = Title(id='A6523948')
         title.save()
         lrpoly.title = title

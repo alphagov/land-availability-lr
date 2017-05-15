@@ -21,9 +21,8 @@ class Command(ShapefileImportCommand):
                        status, geometry):
 
         def create_polygon():
-            poly = Polygon()
+            poly = Polygon(id=polygon_id)
             self.polygon_ids.add(polygon_id)
-            poly.id = polygon_id
             return poly
         if not self.db_empty_from_start or polygon_id in self.polygon_ids:
             try:
@@ -37,8 +36,7 @@ class Command(ShapefileImportCommand):
             outcome = 'created'
 
         def create_title():
-            title = Title()
-            title.id = title_id
+            title = Title(id=title_id)
             return title
         if not self.db_empty_from_start or title_id in self.title_ids:
             try:
