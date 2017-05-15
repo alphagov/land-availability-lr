@@ -1,12 +1,18 @@
 from django.contrib.gis.db import models
 
+class Title(models.Model):
+    # Describes an instance of a Title from Land Registry
+    id = models.CharField(unique=True, primary_key=True, max_length=20)
+    # polygon_set
+    # uprn_set
 
-class LRPoly(models.Model):
+
+class Polygon(models.Model):
     # Describes an instance of a Polygon from Land Registry, which is
     # associated with a Title.
 
-    lrid = models.IntegerField(unique=True)
-    title = models.CharField(max_length=100)
+    id = models.IntegerField(unique=True, primary_key=True)
+    title = models.ForeignKey(Title)
     insert = models.DateTimeField()
     update = models.DateTimeField()
     status = models.CharField(max_length=1)
@@ -16,6 +22,5 @@ class LRPoly(models.Model):
 class Uprn(models.Model):
     # Describes an instance of a UPRN with a Title associated
 
-    lrpoly = models.ForeignKey(LRPoly)  # one of them!
-    title = models.CharField(max_length=100)
+    title = models.ForeignKey(Title)
     uprn = models.CharField(unique=True, max_length=100)

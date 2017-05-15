@@ -1,16 +1,16 @@
-from .models import LRPoly, Uprn
+from .models import Polygon, Uprn
 from rest_framework import serializers
 
 
-class LRPolySerializer(serializers.ModelSerializer):
+class TitleSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = LRPoly
-        fields = ('title', 'insert', 'update', 'status', 'geom')
+        model = Polygon
+        fields = ('id')
 
 
 class UprnSerializer(serializers.ModelSerializer):
-    title = LRPolySerializer()
+    title = TitleSerializer()
 
     class Meta:
         model = Uprn
