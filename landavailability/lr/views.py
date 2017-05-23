@@ -4,7 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Uprn
-from .serializers import UprnSerializer, PolygonCreationSerializer
+from .serializers import (
+    UprnSerializer, PolygonCreationSerializer, UprnCreationSerializer)
 
 
 class UprnDetailView(generics.RetrieveAPIView):
@@ -20,6 +21,19 @@ class PolygonCreateView(APIView):
 
     def post(self, request, format=None):
         serializer = PolygonCreationSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UprnCreateView(APIView):
+    permission_classes = (IsAdminUser, )
+
+    def post(self, request, format=None):
+        serializer = UprnCreationSerializer(data=request.data)
 
         if serializer.is_valid():
             serializer.save()

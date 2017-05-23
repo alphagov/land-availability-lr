@@ -123,3 +123,20 @@ class TestPolygonCreateView(LandRegistryAdminAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Polygon.objects.count(), 1)
         self.assertEqual(Title.objects.count(), 1)
+
+
+class TestUprnCreateView(LandRegistryAdminAPITestCase):
+    @pytest.mark.django_db
+    def test_lr_uprn_create_view(self):
+        url = reverse('uprn-create')
+        data = {
+            "uprn": 12345,
+            "title": "ABC123"
+        }
+
+        title = Title(id='ABC123')
+        title.save()
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Uprn.objects.count(), 1)

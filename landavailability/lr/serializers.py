@@ -60,3 +60,32 @@ class PolygonCreationSerializer(serializers.ModelSerializer):
 
         polygon.save()
         return polygon
+
+
+class UprnCreationSerializer(serializers.ModelSerializer):
+    title = serializers.CharField()
+
+    class Meta:
+        model = Uprn
+        fields = ('uprn', 'title')
+
+    def create(self, validated_data):
+        uprn_id = validated_data.get('uprn')
+
+        title = Title.objects.get(id=validated_data.get('title'))
+
+        try:
+            uprn = Uprn.objects.get(uprn=uprn_id)
+        except Uprn.DoesNotExist:
+            uprn = Uprn(uprn=uprn_id)
+
+        uprn.title = title
+
+        uprn.save()
+        return uprn
+
+    def validate_title(self, value):
+        if Title.objects.filter(id=value).count() == 0:
+            raise serializers.ValidationError(
+                'Title {0} does not exist'.format(value))
+        return value

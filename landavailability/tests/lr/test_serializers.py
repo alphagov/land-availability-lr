@@ -1,9 +1,8 @@
 from unittest import TestCase
 import pytest
 import json
-from django.contrib.gis.geos import Point
-from lr.models import Polygon, Title
-from lr.serializers import PolygonCreationSerializer
+from lr.models import Polygon, Title, Uprn
+from lr.serializers import PolygonCreationSerializer, UprnCreationSerializer
 
 
 class TestPolygonSerializer(TestCase):
@@ -39,3 +38,38 @@ class TestPolygonSerializer(TestCase):
         serializer.save()
         self.assertEqual(Polygon.objects.count(), 1)
         self.assertEqual(Title.objects.count(), 1)
+
+
+class TestUprnSerializer(TestCase):
+    @pytest.mark.django_db
+    def test_uprn_creation_serializer_create_object(self):
+        json_payload = """
+            {
+                "uprn": 12345,
+                "title": "ABC123"
+            }
+        """
+
+        title = Title(id="ABC123")
+        title.save()
+
+        data = json.loads(json_payload)
+        serializer = UprnCreationSerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+
+        serializer.save()
+        self.assertEqual(Uprn.objects.count(), 1)
+        self.assertEqual(Title.objects.count(), 1)
+
+    @pytest.mark.django_db
+    def test_uprn_creation_serializer_create_object_invalid_title(self):
+        json_payload = """
+            {
+                "uprn": 12345,
+                "title": "ABC123"
+            }
+        """
+
+        data = json.loads(json_payload)
+        serializer = UprnCreationSerializer(data=data)
+        self.assertFalse(serializer.is_valid())
