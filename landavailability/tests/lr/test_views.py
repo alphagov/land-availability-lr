@@ -20,6 +20,16 @@ class LandRegistryUserAPITestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
 
+class LandRegistryAdminAPITestCase(APITestCase):
+    @pytest.mark.django_db
+    def setUp(self):
+        self.user = User.objects.create_superuser(
+            username='test', email='test@…', password='top_secret')
+        token = Token.objects.create(user=self.user)
+        self.client = APIClient()
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+
 class TestUprnLookupView(LandRegistryUserAPITestCase):
     @pytest.mark.django_db
     def test_lr_view_lookup_uprn(self):
@@ -82,3 +92,34 @@ class TestUprnLookupView(LandRegistryUserAPITestCase):
         self.assertEqual(
             response.json()['title']['polygons'][0]['update'],
             '2004-11-09T00:00:00')
+
+
+class TestPolygonCreateView(LandRegistryAdminAPITestCase):
+    @pytest.mark.django_db
+    def test_lr_polygon_create_view(self):
+        url = reverse('polygon-create')
+        data = {
+            "id": 12345,
+            "title": "ABC123",
+            "insert": "2004-11-08T00:00:00",
+            "update": "2004-11-09T00:00:00",
+            "status": "C",
+            "geom": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [-0.22341515058230163, 52.93036769987315],
+                        [-0.22039561538021543, 52.93215130879717],
+                        [-0.21891135174799967, 52.93122765287705],
+                        [-0.22193998154995934, 52.92945074233686],
+                        [-0.22341515058230163, 52.93036769987315]
+                    ]
+                ]
+            },
+            "srid": 27700
+        }
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Polygon.objects.count(), 1)
+        self.assertEqual(Title.objects.count(), 1)
