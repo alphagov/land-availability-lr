@@ -1,4 +1,4 @@
-from lr.models import LRPoly, Uprn
+from lr.models import Title, Uprn
 from .importers import CSVImportCommand
 
 
@@ -6,27 +6,29 @@ class Command(CSVImportCommand):
     help = 'Import UPRNs from a CSV file'
 
     def process_row(self, row):
+        title_id, uprn_id, add_or_update = row
         try:
-            poly = LRPoly.objects.get(title=row[0])
-        except LRPoly.DoesNotExist:
-            print(
-                'Cannot add UPRN {0} - missing Title entry: {1}'
-                .format(row[1], row[0]))
+            title = Title.objects.get(id=title_id)
+        except Title.DoesNotExist:
+            # print('Cannot add UPRN {0} - missing Title entry: {1}'
+            #       .format(uprn_id, title_id))
             outcome = 'ignored - uprn does not match any Title'
         else:
             try:
-                uprn = Uprn.objects.get(uprn=row[1])
+                uprn = Uprn.objects.get(uprn=uprn_id)
+                if uprn.title == title:
+                    return 'unchanged'
                 outcome = 'updated'
             except Uprn.DoesNotExist:
                 uprn = Uprn()
-                uprn.uprn = row[1]
+                uprn.uprn = uprn_id
                 outcome = 'created'
 
-            uprn.title = poly
+            uprn.title = title
 
             try:
                 uprn.save()
             except Exception as e:
-                print('Could not add: {0}'.format(row))
+                print('Cannot add: {} - {}'.format(row, e))
                 outcome = 'Error: could not save object'
         return outcome

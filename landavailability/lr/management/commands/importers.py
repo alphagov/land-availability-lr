@@ -77,5 +77,5 @@ def print_outcomes_and_rate(count, outcome_counts, start_time):
         total_count = sum(outcome_counts.values())
         rate_per_hour = total_count / (time.time() - start_time) * 60 * 60
         print(dict(outcome_counts), end=' ')
-        print('Count: {} Rate: {:.0f}/hour'
+        print('Count: {:,} Rate: {:,.0f}/hour'
               .format(total_count, round(rate_per_hour, -3)))
