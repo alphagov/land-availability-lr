@@ -81,8 +81,9 @@ class TestLandModel(TestCase):
         self.assertEqual(Polygon.objects.count(), 1)
 
         uprn = Uprn()
-        uprn.title = title
         uprn.uprn = "0031535421432"
+        uprn.save()  # we need an id before we can add a M2M relationship
+        uprn.titles.add(title)
         uprn.save()
 
         self.assertEqual(Uprn.objects.count(), 1)

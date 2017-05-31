@@ -21,7 +21,7 @@ class Polygon(models.Model):
 
 
 class Uprn(models.Model):
-    # Describes an instance of a UPRN with a Title associated
+    # Describes an instance of a UPRN with Title(s) associated
 
-    title = models.ForeignKey(Title)
+    titles = models.ManyToManyField(Title, related_name='uprns')
     uprn = models.CharField(unique=True, max_length=100)
