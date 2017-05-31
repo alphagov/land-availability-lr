@@ -87,3 +87,11 @@ class TestLandModel(TestCase):
         uprn.save()
 
         self.assertEqual(Uprn.objects.count(), 1)
+
+        uprn2 = Uprn()
+        uprn2.uprn = "200003273799"
+        uprn2.save()
+        title.uprns.add(uprn2)
+        title.save()
+
+        self.assertEqual(title.uprns.count(), 2)
