@@ -6,10 +6,7 @@ import numpy as np
 
 from django.core.management.base import BaseCommand
 import shapefile
-from django.contrib.gis.geos import GEOSGeometry
-from lr.models import LRPoly
-import json
-from datetime import datetime
+from .importers import print_outcomes_and_rate
 
 
 class Command(BaseCommand):
@@ -73,11 +70,3 @@ def print_polygon_title_stats(polygons_by_title):
         sum(1 for num_polygons in num_polygons_by_title.values()
             if num_polygons > 20),
         max(num_polygons_by_title.values())))
-
-def print_outcomes_and_rate(outcomes, start_time):
-    total_count = sum([len(rows) for rows in outcomes.values()])
-    rate_per_hour = total_count / (time.time() - start_time) * 60 * 60
-    for outcome, rows in outcomes.items():
-        print('{} {} e.g. {}'.format(len(rows), outcome, rows[0]))
-    print('Count: {} Rate: {:.0f}/hour'
-          .format(total_count, round(rate_per_hour, -3)))
