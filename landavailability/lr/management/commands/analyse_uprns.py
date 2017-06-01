@@ -2,6 +2,7 @@ import time
 from collections import defaultdict
 import csv
 import operator
+import random
 
 # pip install numpy==1.12.1
 import numpy as np
@@ -15,6 +16,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('csv_filename', type=str)
+        parser.add_argument('--samples', action='store_true')
 
     def handle(self, *args, **options):
         csv_file_name = options['csv_filename']
@@ -34,10 +36,11 @@ class Command(BaseCommand):
                 outcomes[outcome or 'processed'].append(row)
                 if count % 50000 == 0:
                     print_outcomes_and_rate(outcomes, start_time)
-                    print_uprn_title_stats(uprns_by_title, titles_by_uprn)
+                    print_uprn_title_stats(uprns_by_title, titles_by_uprn,
+                                           options)
                     print('\n')
             print_outcomes_and_rate(outcomes, start_time)
-            print_uprn_title_stats(uprns_by_title, titles_by_uprn)
+            print_uprn_title_stats(uprns_by_title, titles_by_uprn, options)
 
     def process_row(self, row, uprns_by_title, titles_by_uprn):
         title_id, uprn_id, add_or_update = row
@@ -45,7 +48,7 @@ class Command(BaseCommand):
         titles_by_uprn[uprn_id].append(title_id)
         return 'processed'
 
-def print_uprn_title_stats(uprns_by_title, titles_by_uprn):
+def print_uprn_title_stats(uprns_by_title, titles_by_uprn, options):
     num_uprns_by_title = dict(
         (title, len(uprns))
         for title, uprns in uprns_by_title.items())
@@ -56,6 +59,7 @@ def print_uprn_title_stats(uprns_by_title, titles_by_uprn):
     num_titles = len(uprns_by_title)
     print('Uprns: {} Titles: {}'.format(
         num_uprns, num_titles))
+
     # freq distribution
     def print_freq_dist(value_counts, max_bin=10):
         value_counts_float = \
@@ -74,3 +78,18 @@ def print_uprn_title_stats(uprns_by_title, titles_by_uprn):
     print('Number of titles per uprn: (average {:.2f})'.format(
         float(num_titles) / num_uprns))
     print_freq_dist(num_titles_by_uprn)
+
+    # sample
+    if options['samples']:
+        print('Uprns with multiple titles (3 random ones):')
+        uprns = list(num_titles_by_uprn.items())
+        def print_sample(value_count_tuples, minimum_count):
+            start = random.randrange(len(value_count_tuples))
+            for value, count in value_count_tuples[start:] + \
+                    value_count_tuples[:start]:
+                if count >= minimum_count:
+                    print('{}: {}'.format(count, value))
+                    return
+        print_sample(uprns, 2)
+        print_sample(uprns, 5)
+        print_sample(uprns, 10)
