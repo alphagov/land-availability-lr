@@ -16,7 +16,15 @@ class Command(CSVImportCommand):
                              ' Continue? (y/n) >'.format(num_uprns))
             if response.lower() != 'y':
                 sys.exit()
-            Uprn.objects.all().delete()
+
+            # if we did this with the Django ORM it would have to load all the
+            # objs into memory!
+            from django.db import connection
+            cursor = connection.cursor()
+            try:
+                cursor.execute('delete from lr_uprn;')
+            finally:
+                cursor.close()
 
         super(Command, self).handle(*args, **options)
 
