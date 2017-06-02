@@ -41,7 +41,11 @@ class Command(BaseCommand):
         for title in lookup_uprn_in_csv(
                 options['uprn_csv_filename'], uprn):
             titles.append(title)
-            title_obj = Title.objects.get(id=title)
+            try:
+                title_obj = Title.objects.get(id=title)
+            except Title.DoesNotExist:
+                print('Title {} not found'.format(title))
+                continue
             print('Title {} has {} polygons'.format(
                 title, title_obj.polygons.count()))
             groups_of_polygons.append(
