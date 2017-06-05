@@ -21,11 +21,11 @@ class TitleSerializer(serializers.ModelSerializer):
 
 
 class UprnSerializer(serializers.ModelSerializer):
-    title = TitleSerializer()
+    titles = TitleSerializer(many=True)
 
     class Meta:
         model = Uprn
-        fields = ('uprn', 'title')
+        fields = ('uprn', 'titles')
 
 
 class PolygonCreationSerializer(serializers.ModelSerializer):
@@ -63,7 +63,7 @@ class PolygonCreationSerializer(serializers.ModelSerializer):
 
 
 class UprnCreationSerializer(serializers.ModelSerializer):
-    title = serializers.CharField()
+    title = serializers.CharField(write_only=True)
 
     class Meta:
         model = Uprn
@@ -71,7 +71,6 @@ class UprnCreationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         uprn_id = validated_data.get('uprn')
-
         title = Title.objects.get(id=validated_data.get('title'))
 
         try:
@@ -79,9 +78,9 @@ class UprnCreationSerializer(serializers.ModelSerializer):
         except Uprn.DoesNotExist:
             uprn = Uprn(uprn=uprn_id)
 
-        uprn.title = title
-
         uprn.save()
+        uprn.titles.add(title)
+
         return uprn
 
     def validate_title(self, value):
