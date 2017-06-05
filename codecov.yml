@@ -1,0 +1,3 @@
+ignore:
+      - "landavailability/lr/management/commands/import_uprns.py"
+

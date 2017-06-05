@@ -72,25 +72,26 @@ class TestUprnLookupView(LandRegistryUserAPITestCase):
 
         # Create the Uprn and set the Title
         uprn = Uprn()
-        uprn.title = title
         uprn.uprn = "0031535421432"
         uprn.save()
+        uprn.titles.add(title)
 
         url = reverse('uprn-detail', kwargs={'uprn': '0031535421432'})
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()['title']['id'], 'A6523948')
+        self.assertEqual(response.json()['titles'][0]['id'], 'A6523948')
         self.assertEqual(
-            response.json()['title']['polygons'][0]['geom']['type'], 'Polygon')
+            response.json()['titles'][0]['polygons'][0]['geom']['type'],
+            'Polygon')
         self.assertEqual(response.json()['uprn'], '0031535421432')
         self.assertEqual(
-            response.json()['title']['polygons'][0]['status'], 'A')
+            response.json()['titles'][0]['polygons'][0]['status'], 'A')
         self.assertEqual(
-            response.json()['title']['polygons'][0]['insert'],
+            response.json()['titles'][0]['polygons'][0]['insert'],
             '2004-11-08T00:00:00')
         self.assertEqual(
-            response.json()['title']['polygons'][0]['update'],
+            response.json()['titles'][0]['polygons'][0]['update'],
             '2004-11-09T00:00:00')
 
 
@@ -140,3 +141,6 @@ class TestUprnCreateView(LandRegistryAdminAPITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Uprn.objects.count(), 1)
+
+        uprn_saved = Uprn.objects.first()
+        self.assertEqual(uprn_saved.titles.all()[0].id, 'ABC123')
