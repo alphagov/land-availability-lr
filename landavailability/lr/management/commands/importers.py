@@ -37,7 +37,9 @@ class CSVImportCommand(BaseCommand):
                 for count, row in enumerate(reader):
                     outcome = self.process_row(row)
                     outcome_counts[outcome or 'processed'] += 1
-                    print_outcomes_and_rate(count, outcome_counts, start_time)
+                    if count % 100 == 0:
+                        print_outcome_counts_and_rate(
+                            outcome_counts, start_time)
 
 
 class ShapefileImportCommand(BaseCommand):
@@ -69,13 +71,5 @@ class ShapefileImportCommand(BaseCommand):
             outcome = self.process_record(*record.record,
                                           record.shape.__geo_interface__)
             outcome_counts[outcome or 'processed'] += 1
-            print_outcomes_and_rate(count, outcome_counts, start_time)
-
-
-def print_outcomes_and_rate(count, outcome_counts, start_time):
-    if count % 100 == 0:
-        total_count = sum(outcome_counts.values())
-        rate_per_hour = total_count / (time.time() - start_time) * 60 * 60
-        print(dict(outcome_counts), end=' ')
-        print('Count: {:,} Rate: {:,.0f}/hour'
-              .format(total_count, round(rate_per_hour, -3)))
+            if count % 100 == 0:
+                print_outcome_counts_and_rate(outcome_counts, start_time)

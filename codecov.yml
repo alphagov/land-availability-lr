@@ -1,3 +1,5 @@
 ignore:
+      - "landavailability/tests/.*"
+      - "landavailability/lr/management/commands/analyse_polygons.py"
+      - "landavailability/lr/management/commands/analyse_uprnsi.py"
       - "landavailability/lr/management/commands/import_uprns.py"
-
