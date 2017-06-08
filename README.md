@@ -19,6 +19,14 @@ tools and dependencies using **brew**.
 createdb landavailability-lr
 ```
 
+## Setup DB
+
+```
+workon landavailability-lr
+cd land-availability-lr/landavailability
+./manage.py migrate
+```
+
 # Project Configuration
 
 Make sure you have this environment variable set:
@@ -56,10 +64,52 @@ To do the dump:
 
     pg_dump -W -h <db-host> -p 5432 -d landavailability-lr -U landavailability -F c -b -v -f lr.pg_dump
 
-## Restore DB
+
+# Importing data (monthly delta)
+
+## User and token
+
+To import LR delta data you need a user and token. First open a shell:
+
+    workon landavailability-lr
+    cd land-availability-lr/landavailability
+    ./manage.py shell
+
+In the shell:
+
+```
+# check if there is already an admin user
+from django.contrib.auth.models import User
+from django.db.models import Q
+User.objects.filter(Q(is_superuser=True)).distinct()
+
+# create admin user
+user = User.objects.create_user('admin', password='pass', is_staff=True)
+user.save()
+
+# check if a token exists for this user
+from rest_framework.authtoken.models import Token
+Token.objects.filter(Q(user=user))
+
+# create token
+token = Token.objects.create(user=user)
+print(token.key)
+```
+
+This prints the hex token e.g. `8f3f29c458d38a1b073992421965a15e90bd8db9`
+
+## Get data
+
+The LR data is not public.
+
+## Run LR app
+
+    workon landavailability-lr
+    cd land-availability-lr/landavailability
+    ./manage.py runserver localhost:8001
+
+## Run import script
+
+(while LR app runs in another shell)
 
 TODO
-
-# Python
-
-The project is being developed and tested with **Python >= 3.5.x**
