@@ -43,6 +43,13 @@ export DATABASE_URL=postgres://andreagrandi@localhost:5432/landavailability-lr
 export SECRET_KEY=abcd1234
 ```
 
+Make sure the correct Heroku buildpacks are set:
+
+```
+heroku buildpacks:set https://github.com/cyberdelia/heroku-geo-buildpack.git
+heroku buildpacks:set heroku/python
+```
+
 ## Dump DB
 
 You may need a newer version of psql - it must be the same or newer than the postgres version of the db. To get psql 9.6 on Ubuntu 16.04:
