@@ -63,10 +63,8 @@ To do the dump:
 
     pg_dump -W -h <db-host> -p 5432 -d landavailability-lr -U landavailability -F c -b -v -f lr.pg_dump
 
-## Restore DB
+## Restore DB onto Heroku
 
-TODO
+To restore a database onto Heroku:
 
-# Python
-
-The project is being developed and tested with **Python >= 3.5.x**
+    heroku pg:backups:restore --app land-availability-lr '<s3-url>' DATABASE_URL
