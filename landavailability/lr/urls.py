@@ -9,6 +9,9 @@ urlpatterns = [
         r'^polygons/$',
         views.PolygonCreateView.as_view(), name='polygon-create'),
     url(
+        r'^polygons-from-point$',
+        views.polygons_from_point, name='polygons-from-point'),
+    url(
         r'^uprns/$',
         views.UprnCreateView.as_view(), name='uprn-create'),
 ]
